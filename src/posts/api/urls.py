@@ -7,8 +7,9 @@ from .views import (
 
 urlpatterns = [
     url(r'^$', PostListAPIView.as_view(), name='list'),
+    url(r'^(?P<pk>[\w-]+)/$', PostListAPIView.as_view(), name='list_detail'),
     # url(r'^create/$', post_create),
-    # url(r'^(?P<slug>[\w-]+)/$', post_detail, name='detail'),
+    # url(r'^(?P<slug>\d+)/$', post_detail, name='detail'),
     # url(r'^(?P<slug>[\w-]+)/edit/$', post_update, name='update'),
     # url(r'^(?P<slug>[\w-]+)/delete/$', post_delete),
 ]
