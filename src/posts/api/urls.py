@@ -2,14 +2,19 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from .views import (
-    PostListAPIView
+    PostListAPIView,
+    PostDetailAPIView,
+    PostUpdateAPIView,
+    PostDestroyAPIView
     )
 
 urlpatterns = [
     url(r'^$', PostListAPIView.as_view(), name='list'),
-    url(r'^(?P<pk>[\w-]+)/$', PostListAPIView.as_view(), name='list_detail'),
-    # url(r'^create/$', post_create),
-    # url(r'^(?P<slug>\d+)/$', post_detail, name='detail'),
-    # url(r'^(?P<slug>[\w-]+)/edit/$', post_update, name='update'),
-    # url(r'^(?P<slug>[\w-]+)/delete/$', post_delete),
+    url(r'^(?P<pk>[\w-]+)/$', PostDetailAPIView.as_view(), 
+        name='post_detail'),
+    url(r'^(?P<pk>[\w-]+)/edit/$', PostUpdateAPIView.as_view(), 
+        name='post_update'),
+    url(r'^(?P<pk>[\w-]+)/delete/$', PostDestroyAPIView.as_view(), 
+        name='post_delete'),
+   
 ]
