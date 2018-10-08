@@ -5,14 +5,19 @@ from ..models import Post
 class PostListSerializer(ModelSerializer):
     class Meta:
         model = Post
-        fields = ('title', 'content', 'image', 'draft', 'publish')
+        fields = ('id','user', 'title', 'content', 'image', 'draft', 'publish')
 
     # def create(self)
 
 class PostDetailSerializer(ModelSerializer):
     class Meta:
         model = Post
-        fields = ('id', 'title', 'content', 'image', 'publish')
+        fields = ('title', 'content', 'image', 'publish')
+
+class PostCreateUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('title', 'content', 'image', 'publish')
 
 
     # title = serializers.CharField(max_length=200)
