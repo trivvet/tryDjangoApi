@@ -1,11 +1,31 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (
+    ModelSerializer,
+    HyperlinkedModelSerializer,
+    HyperlinkedIdentityField
+    )
 
 from ..models import Post
 
 class PostListSerializer(ModelSerializer):
+    url = HyperlinkedIdentityField(
+        view_name='posts-api:post_detail',
+        lookup_field='pk')
+
+    edit_url = HyperlinkedIdentityField(
+        view_name="posts-api:post_update",
+        lookup_field='pk')
+
     class Meta:
         model = Post
-        fields = ('id','user', 'title', 'content', 'image', 'draft', 'publish')
+        fields = (
+            'url', 
+            'edit_url',
+            'user', 
+            'title', 
+            'content', 
+            'image', 
+            'slug', 
+            'publish')
 
     # def create(self)
 
