@@ -8,6 +8,7 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     DestroyAPIView
     ) 
+
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from ..models import Post
@@ -16,6 +17,7 @@ from .serializers import (
     PostDetailSerializer,
     PostCreateUpdateSerializer
     )
+from .pagination import PostPagePagination
 from .permissions import UserOwnerPermission
 
 class PostListAPIView(ListAPIView):
@@ -23,6 +25,7 @@ class PostListAPIView(ListAPIView):
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('title', 'content', 'user__first_name', 'user__last_name')
     ordering_fields = ('title', 'content')
+    pagination_class = PostPagePagination
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
@@ -30,11 +33,11 @@ class PostListAPIView(ListAPIView):
         query = self.request.GET.get("q")
         if query:
             queryset_list = queryset_list.filter(
-                    Q(title__icontains=query)|
-                    Q(content__icontains=query)|
-                    Q(user__first_name__icontains=query) |
-                    Q(user__last_name__icontains=query)
-                    ).distinct()
+                Q(title__icontains=query)|
+                Q(content__icontains=query)|
+                Q(user__first_name__icontains=query) |
+                Q(user__last_name__icontains=query)
+                ).distinct()
         return queryset_list
 
 class PostDetailAPIView(RetrieveAPIView):

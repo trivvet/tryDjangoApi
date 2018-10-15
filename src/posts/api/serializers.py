@@ -17,7 +17,7 @@ class PostDetailSerializer(ModelSerializer):
 class PostCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = Post
-        fields = ('title', 'content', 'image', 'publish')
+        fields = ('id', 'title', 'content', 'image', 'publish')
 
 
     # title = serializers.CharField(max_length=200)
