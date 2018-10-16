@@ -24,8 +24,10 @@ from accounts.views import (login_view, register_view, logout_view)
 urlpatterns = [
     
     url(r'^admin/', admin.site.urls),
-    url(r'^comments/', include("comments.urls", namespace='comments')),
-    
+    url(r'^comments/', include("comments.urls", 
+        namespace='comments')),
+    url(r'^api/comments/', include("comments.api.urls",
+        namespace="comments-api")), 
     url(r'^register/', register_view, name='register'),
     url(r'^login/', login_view, name='login'),
     url(r'^logout/', logout_view, name='logout'),
