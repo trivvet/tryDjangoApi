@@ -3,6 +3,7 @@ from django.db.models import Q
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
+    RetrieveAPIView
     ) 
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import (
@@ -11,7 +12,11 @@ from rest_framework.permissions import (
     )
 
 from ..models import Comment
-from .serializers import CommentSerializer
+from .serializers import (
+    CommentSerializer, 
+    CommentDetailSerializer,
+    CommentChildSerializer
+    )
 
 class CommentListAPIView(ListAPIView):
     queryset = Comment.objects.all()
@@ -35,6 +40,17 @@ class CommentListAPIView(ListAPIView):
                 Q(content__icontains=query)
                 ).distinct()
         return queryset_list
+
+# class CommentChildListAPIView(ListAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentChildSerializer
+#     permission_classes = (IsAuthenticated, IsAdminUser)
+#     lookup_field = 'parent'
+
+class CommentDetailAPIView(RetrieveAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentDetailSerializer
+    permission_classes = (IsAuthenticated, IsAdminUser)
 
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
