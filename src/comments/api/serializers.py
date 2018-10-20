@@ -12,9 +12,8 @@ class CommentSerializer(ModelSerializer):
     #     view_name="comments-api:comments_child_list",
     #     lookup_field='id')
     reply_count = SerializerMethodField()
-    detail_url = HyperlinkedIdentityField(
-        view_name="comments-api:comment_detail",
-        lookup_field='pk')
+    # detail_url = HyperlinkedIdentityField(
+    #     view_name="comments-api:comment_detail")
 
     class Meta:
         model = Comment
@@ -25,7 +24,7 @@ class CommentSerializer(ModelSerializer):
             'content',
             'parent',
             # 'children_list_url',
-            'detail_url',
+            # 'detail_url',
             'reply_count'
         )
 
