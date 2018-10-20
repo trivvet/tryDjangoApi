@@ -12,24 +12,24 @@ from ..models import Comment
 
 User = get_user_model()
 
-def create_comment_serializer(type='post', slug=None, parent_id=None):
+def create_comment_serializer(type='post', 
+    slug=None, parent_id=None, user=User.objects.all().first()):
     class CommentCreateSerializer(ModelSerializer):
         class Meta:
             model = Comment
             fields = (
                 'user',
                 'content',
-                'parent',
                 'timestamp'
                 )
 
         def __init__ (self, *args, **kwargs):
-            self.model_type = model_type
+            self.model_type = type
             self.slug = slug
             self.parent_obj = None
-            if self.parent_id:
+            if parent_id:
                 parent_qs = Comment.objects.filter(id=parend_id)
-                if parent_qs.exist() and parent_qs.count() == 1:
+                if parent_qs.exists() and parent_qs.count() == 1:
                     self.parent_obj = parent_qs.first()
 
             return super(CommentCreateSerializer, self).__init__(
@@ -38,24 +38,24 @@ def create_comment_serializer(type='post', slug=None, parent_id=None):
         def validate(self, data):
             model_type = self.model_type
             model_qs = ContentType.objects.filter(model=model_type)
-            if not model_qs.exist() or model_qs.count() != 1:
+            if not model_qs.exists() or model_qs.count() != 1:
                 raise ValidationError("This is not a valid content type")
-            SomeModel = model_qs.firts().model_class()
+            SomeModel = model_qs.first().model_class()
             obj_qs = SomeModel.objects.filter(slug=self.slug)
-            if not obj_qs.exist() or obj_qs.count() != 1:
+            if not obj_qs.exists() or obj_qs.count() != 1:
                 raise ValidationError("This slug is not valid for this content type")
             return data
 
         def create(self, validated_data):
             content = validated_data.get("content")
-            user = User.objects.all().first()
+            main_user = user
             model_type = self.model_type
             slug = self.slug
             parent_obj = self.parent_obj
             comment = Comment.objects.create_by_model_type(
                 model_type=model_type, slug=slug, content=content,
-                user=user, parent_obj=parent_obj)
-            return comment
+                user=main_user, parent_obj=parent_obj)
+            return comment 
 
     return CommentCreateSerializer
 
