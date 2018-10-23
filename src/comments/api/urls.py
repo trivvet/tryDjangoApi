@@ -5,6 +5,7 @@ from .views import (
     CommentListAPIView,
     CommentCreateAPIView,
     CommentDetailAPIView,
+    CommentEditAPIView
     # CommentChildListAPIView
     )
 
@@ -15,6 +16,8 @@ urlpatterns = [
     #     name='comments_child_list'),
     url(r'^(?P<pk>\d+)/$', CommentDetailAPIView.as_view(), 
         name='comment_detail'),
+    url(r'^(?P<pk>\d+)/edit/$', CommentEditAPIView.as_view(), 
+        name='comment_edit'),
     url(r'^create/$', CommentCreateAPIView.as_view(),
         name='comment_create'),
     # url(r'^(?P<id>\d+)/delete/$', comment_delete, name='delete'),

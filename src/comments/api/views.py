@@ -6,6 +6,7 @@ from rest_framework.generics import (
     RetrieveAPIView
     ) 
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin
 from rest_framework.permissions import (
     IsAuthenticated, 
     IsAdminUser
@@ -15,6 +16,7 @@ from ..models import Comment
 from .serializers import (
     CommentSerializer, 
     CommentDetailSerializer,
+    CommentEditSerializer,
     CommentChildSerializer,
     create_comment_serializer
     )
@@ -52,6 +54,18 @@ class CommentDetailAPIView(RetrieveAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentDetailSerializer
     permission_classes = (IsAuthenticated, IsAdminUser)
+
+class CommentEditAPIView(RetrieveAPIView, UpdateModelMixin, DestroyModelMixin):
+    queryset = Comment.objects.filter(id__gte=0)
+    serializer_class = CommentEditSerializer
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
 
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
