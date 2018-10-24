@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from rest_framework.serializers import (
     ModelSerializer,
@@ -71,13 +72,41 @@ class CommentSerializer(ModelSerializer):
         model = Comment
         fields = (
             'id',
-            'user',
             'content_type',
             'content',
             'parent',
             # 'children_list_url',
             # 'detail_url',
-            'reply_count'
+            'reply_count',
+            'timestamp'
+        )
+
+    def get_reply_count(self, obj):
+        if obj.is_parent:
+            return obj.children().count()
+        else:
+            return 0
+
+class CommentListSerializer(ModelSerializer):
+    # children_list_url = HyperlinkedIdentityField(
+    #     view_name="comments-api:comments_child_list",
+    #     lookup_field='id')
+    reply_count = SerializerMethodField()
+    url = HyperlinkedIdentityField(
+         view_name="comments-api:comment_detail")
+
+    class Meta:
+        model = Comment
+        fields = (
+            'id',
+            'url',
+            # 'content_type',
+            'content',
+            # 'parent',
+            # 'children_list_url',
+            # 'detail_url',
+            'reply_count',
+            'timestamp'
         )
 
     def get_reply_count(self, obj):
@@ -99,12 +128,13 @@ class CommentChildSerializer(ModelSerializer):
 class CommentDetailSerializer(ModelSerializer):
     replies = SerializerMethodField()
     reply_count = SerializerMethodField()
+    content_object_url = SerializerMethodField()
     class Meta:
         model = Comment
         fields = (
             'id',
             'user',
-            'content_type',
+            'content_object_url',
             'object_id',
             'content',
             'replies',
@@ -130,3 +160,9 @@ class CommentDetailSerializer(ModelSerializer):
             return obj.children().count()
         else:
             return 0
+
+    def get_content_object_url(self, obj):
+        try:
+            return obj.content_object.get_api_url()
+        except:
+            return None

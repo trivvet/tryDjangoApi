@@ -13,17 +13,19 @@ from rest_framework.permissions import (
     )
 
 from ..models import Comment
+from .pagination import CommentPagePagination
 from .serializers import (
-    CommentSerializer, 
+    CommentListSerializer, 
     CommentDetailSerializer,
     CommentChildSerializer,
     create_comment_serializer
     )
 
 class CommentListAPIView(ListAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    queryset = Comment.objects.filter(id__gte=0)
+    serializer_class = CommentListSerializer
     permission_classes = (IsAuthenticated, IsAdminUser)
+    pagination_class = CommentPagePagination
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = (
         'user__username',
