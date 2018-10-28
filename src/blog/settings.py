@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'markdown_deux',
     'pagedown',
     'rest_framework',
+    'rest_framework.authtoken',
 
     # local apps
     'comments',
