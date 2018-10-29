@@ -6,6 +6,7 @@ from rest_framework.serializers import (
 
 from comments.models import Comment
 from comments.api.serializers import CommentSerializer
+from accounts.api.serializers import AccountDetailSerializer
 
 from ..models import Post
 
@@ -16,7 +17,7 @@ class PostListSerializer(ModelSerializer):
     edit_url = HyperlinkedIdentityField(
         view_name="posts-api:post_update",
         lookup_field='pk')
-    user = SerializerMethodField()
+    user = AccountDetailSerializer(read_only=True)
 
     class Meta:
         model = Post
@@ -31,13 +32,8 @@ class PostListSerializer(ModelSerializer):
             'publish'
         )
 
-    def get_user(self, obj):
-        return obj.user.username
-
-    # def create(self)
-
 class PostDetailSerializer(ModelSerializer):
-    user = SerializerMethodField()
+    user = AccountDetailSerializer(read_only=True)
     image = SerializerMethodField()
     html = SerializerMethodField()
     comments = SerializerMethodField()
@@ -52,9 +48,6 @@ class PostDetailSerializer(ModelSerializer):
             'html',
             'comments'
         )
-
-    def get_user(self, obj):
-        return obj.user.username
 
     def get_image(self, obj):
         if obj.image:

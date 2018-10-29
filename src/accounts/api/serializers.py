@@ -32,6 +32,16 @@ class AccountListSerializer(ModelSerializer):
             'last_login'
         )
 
+class AccountDetailSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'last_login'
+            )
+
 class AccountCreateSerializer(ModelSerializer):
     email2 = EmailField(label="Confirm Email")
     password_repeat = CharField(label="Confirm Password")
