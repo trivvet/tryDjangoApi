@@ -46,8 +46,9 @@ class AccountLoginAPIView(APIView):
     #     return Response(content)
 
     def post(self, request, *args, **kwargs):
-        data = request.POST.get('data')
+        data = request.POST
         serializer = self.serializer_class(data=data)
+        # import pdb;pdb.set_trace()
         if serializer.is_valid(raise_exception=True):
             new_data = serializer.data
             # user = serializer.validated_data['username']

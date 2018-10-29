@@ -1,9 +1,13 @@
 import collections
 from json import loads, dumps
+
 from django.contrib.auth import (
     get_user_model,
     hashers
     )
+from django.db.models import Q
+
+from rest_framework.authtoken.models import Token
 from rest_framework.serializers import (
     ModelSerializer,
     HyperlinkedIdentityField,
@@ -80,8 +84,11 @@ class AccountCreateSerializer(ModelSerializer):
 
 class AccountLoginSerializer(ModelSerializer):
     token = CharField(allow_blank=True, read_only=True)
-    username = CharField(label="Username")
-    email = EmailField(label="Email")
+    username = CharField(required=False, allow_blank=True, 
+        label="Username")
+    email = EmailField(required=False, allow_blank=True, 
+        label="Email")
+
     class Meta:
         model = User
         fields = (
@@ -90,7 +97,34 @@ class AccountLoginSerializer(ModelSerializer):
             'password',
             'token'
         )
-        write_only_fields = ('password')
+        extra_kwargs = {
+            "password": {
+                "write_only": True
+            }
+        }
     
     def validate(self, data):
+        email = data.get("email", None)
+        username = data.get("username", None)
+        password = data.get("password", None)
+        if not email and not username:
+            raise ValidationError(
+                "A username or email is required to login"
+                )
+        user = User.objects.filter(
+            Q(username=username)|
+            Q(email=email)
+        ).distinct()
+        if not user.exists() and user.count() == 1:
+            raise ValidationError(
+                "User with this username or email doesn't exist")
+        user = user.first()
+        if not user.check_password(password):
+            raise ValidationError(
+                {'password': "This password isn't valid"})
+
+        print user
+
+        data["token"] = Token.objects.get_or_create(user=user)
+
         return data

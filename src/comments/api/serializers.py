@@ -120,6 +120,7 @@ class CommentChildSerializer(ModelSerializer):
         model = Comment
         fields = (
             'id',
+            'user',
             'content',
             'timestamp',
             'parent'
