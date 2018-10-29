@@ -19,6 +19,8 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 
+from rest_framework_jwt.views import obtain_jwt_token
+
 from accounts.views import (login_view, register_view, logout_view)
 
 urlpatterns = [
@@ -36,6 +38,7 @@ urlpatterns = [
         namespace='posts-api')),
     url(r'^api/accounts/', include('accounts.api.urls',
         namespace="accounts-api")),
+     url(r'^api/auth/token/', obtain_jwt_token),
 ]
 
 if settings.DEBUG:

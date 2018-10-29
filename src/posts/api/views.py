@@ -9,7 +9,11 @@ from rest_framework.generics import (
     DestroyAPIView
     ) 
 
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated, 
+    IsAdminUser,
+    AllowAny
+    )
 
 from ..models import Post
 from .serializers import (
@@ -26,7 +30,7 @@ class PostListAPIView(ListAPIView):
     search_fields = ('title', 'content', 'user__first_name', 'user__last_name')
     ordering_fields = ('title', 'content')
     pagination_class = PostPagePagination
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self, *args, **kwargs):
         queryset_list = Post.objects.all()
@@ -43,12 +47,12 @@ class PostListAPIView(ListAPIView):
 class PostDetailAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostDetailSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
 class PostCreateAPIView(CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostCreateUpdateSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (UserOwnerPermission, IsAdminUser)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -56,7 +60,7 @@ class PostCreateAPIView(CreateAPIView):
 class PostUpdateAPIView(RetrieveUpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostCreateUpdateSerializer
-    permission_classes = (IsAuthenticated, UserOwnerPermission)
+    permission_classes = (UserOwnerPermission, IsAdminUser)
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
@@ -64,5 +68,5 @@ class PostUpdateAPIView(RetrieveUpdateAPIView):
 class PostDestroyAPIView(DestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostDetailSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (UserOwnerPermission, IsAdminUser)
 

@@ -15,7 +15,11 @@ from rest_framework.generics import (
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated, 
+    IsAdminUser,
+    AllowAny
+    )
 
 from .serializers import (
     AccountListSerializer,
@@ -28,19 +32,18 @@ User = get_user_model()
 class AccountListAPIView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = AccountListSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (IsAdminUser)
 
 class AccountDetailAPIView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = AccountDetailSerializer
-    permission_classes = (IsAuthenticated, )
 
 class AccountCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = AccountCreateSerializer
+    permission_classes = (AllowAny)
 
 class AccountLoginAPIView(APIView):
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
     serializer_class = AccountLoginSerializer
 
     # def get(self, request, format=None):

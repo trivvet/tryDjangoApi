@@ -9,7 +9,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin
 from rest_framework.permissions import (
     IsAuthenticated, 
-    IsAdminUser
+    IsAdminUser,
+    AllowAny
     )
 
 from ..models import Comment
@@ -24,16 +25,13 @@ from .serializers import (
 class CommentListAPIView(ListAPIView):
     queryset = Comment.objects.filter(id__gte=0)
     serializer_class = CommentListSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (AllowAny,)
     pagination_class = CommentPagePagination
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = (
         'user__username',
         'content'
     )
-    # ordering_fields = ('', 'content')
-    # pagination_class = PostPagePagination
-    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
         queryset_list = Comment.objects.all()
@@ -54,7 +52,7 @@ class CommentListAPIView(ListAPIView):
 class CommentDetailAPIView(RetrieveAPIView, UpdateModelMixin, DestroyModelMixin):
     queryset = Comment.objects.filter(id__gte=0)
     serializer_class = CommentDetailSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (AllowAny)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -65,7 +63,6 @@ class CommentDetailAPIView(RetrieveAPIView, UpdateModelMixin, DestroyModelMixin)
 
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
-    permission_classes = (IsAuthenticated, IsAdminUser)
 
     def get_serializer_class(self):
         model_type = self.request.GET.get("type")
